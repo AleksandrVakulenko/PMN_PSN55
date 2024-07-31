@@ -17,6 +17,6 @@ for k=1:ParSize
 end
 
 % vout
-errors = error*3; %3 сигма
+errors = error*1; %1 сигма
 
 end

@@ -59,10 +59,8 @@ ModelFunction = @(v) [(Fimag(v, xdata) - ydata(:,2))./mean(ydata(:,2)); ...
 % ModelFunction = @(v) [Fimag(v, xdata) - ydata(:,2)]';
 
 
-% Lower = coeff(N, :)*0.9;
-% Start = coeff(N, :).*Rand_add(size(coeff(N, :),2));
+
 Start = coeff(N, :);
-% Upper = coeff(N, :)*1.1;
 
 % dEps
 Lower([1,4,7,10]) = 0;
@@ -71,7 +69,6 @@ Upper([1,4,7,10]) = 50000;
 %freq
 Lower([2,5,8,11]) = coeff(N, [2,5,8,11])*0.8;
 Upper([2,5,8,11]) = coeff(N, [2,5,8,11])*1.2;
-% Lower(2) = 1e-10;
 
 % alpha
 Lower([3,6,9,12]) = [0, 1, 0, 0];
@@ -120,7 +117,7 @@ plot(freq, eps1, '-xb')
 plot(freq, eps1_model, '-r')
 set(gca, 'xscale', 'log')
 
-%% foeffs from current fit
+%% coeffs from current fit
 
 figure
 hold on
