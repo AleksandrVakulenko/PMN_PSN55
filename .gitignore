@@ -1,0 +1,8 @@
+*.*
+
+!*.m
+!.gitignore
+!*.mat
+
+!*.txt
+!*.png
