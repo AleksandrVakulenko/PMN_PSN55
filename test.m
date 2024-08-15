@@ -1,10 +1,14 @@
 
+% README
+% https://ned.ipac.caltech.edu/level5/Stetson/Stetson_contents.html
+
 clc
 
 xdata = -4:0.1:5;
 N = numel(xdata);
 
-noise1 = 0.05*(2*rand(1,N)-1);
+% noise1 = 0.05*(2*rand(1,N)-1);
+noise1 = normrnd(0, 0.05, 1, N);
 
 x=xdata;
 yexp1 = 0.01*x.^2 + 0.1*x - 0.2 + noise1;
@@ -14,6 +18,7 @@ yexp1 = 0.01*x.^2 + 0.1*x - 0.2 + noise1;
 figure
 plot(xdata, yexp1)
 
+real_res = yexp1 - 0.01*x.^2 + 0.1*x - 0.2;
 
 %%
 clc
@@ -21,7 +26,7 @@ clc
 model_1 = @(a, b, c, x) a*x.^2 + b*x + c;
 
 
-model = @(v) [model_1(v(1), v(2), v(3), xdata) - yexp1];
+model = @(v) [model_1(v(1), v(2), v(3), xdata) - yexp1]/1;
 
 
 % out = model([0.2 1]);
@@ -66,7 +71,7 @@ for i=1:ParSize
         Correl(i,j) = VarCovar(i,j)./(VarCovar(i,i)*VarCovar(j,j))^0.5;
     end
 end
-imagesc(Correl);
+% imagesc(Correl);
 
 
 for k=1:ParSize
@@ -77,15 +82,21 @@ vout
 error*3 %3 сигма
 
 
+%%
+
+resnum = numel(residual);
+varnum = numel(vout);
+try_errors = [0.01:0.005:0.1];
+chi2 = sum(residual'.^2./(try_errors).^2)/(resnum-varnum);
+
+% figure
+% plot(try_errors, chi2)
+% yline(1)
+% set(gca,'yscale','log')
 
 
 
-
-
-
-
-
-
+chi2 = sum(residual'.^2./(0.05).^2)/(resnum-varnum)
 
 
 
