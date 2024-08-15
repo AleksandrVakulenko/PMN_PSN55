@@ -26,9 +26,6 @@ Fimag = @(v, X) -imag(ColeCole_4(v(1), v(2), v(3), ...
                                     X));
 
 
-Rand_add = @(N) 1 + 0.05*(rand(1, N)-0.5)*2;
-
-
 load('Data/coeff.mat')
 load('Data/Temp.mat')
 
@@ -49,11 +46,12 @@ filename = ['./Data/freq/T_' num2str(N) '.TXT'];
 
 
 
-xdata = freq;
-ydata = [eps1, eps2];
+relative_error = 0.6/100;
+eps1_abs_error = eps1*relative_error;
+eps2_abs_error = eps2*relative_error;
 
-ModelFunction = @(v) [(Freal(v, xdata) - ydata(:,1))./(ydata(:,1)*0.006); ...
-                      (Fimag(v, xdata) - ydata(:,2))./(ydata(:,2)*0.006)]';
+ModelFunction = @(v) [(Freal(v, freq) - eps1)./eps1_abs_error; ...
+                      (Fimag(v, freq) - eps2)./eps2_abs_error]';
 
 % ModelFunction = @(v) [Fimag(v, xdata) - ydata(:,2)]';
 
@@ -107,14 +105,14 @@ eps2_model = Fimag(vout, freq);
 figure
 hold on
 % plot(freq, eps2, '-xb')
-errorbar(freq, eps2, eps2*0.01, '-xb')
+errorbar(freq, eps2, eps2*relative_error, '-xb')
 plot(freq, eps2_model, '-r')
 set(gca, 'xscale', 'log')
 
 figure
 hold on
 % plot(freq, eps1, '-xb')
-errorbar(freq, eps1, eps1*0.01, '-xb')
+errorbar(freq, eps1, eps1*relative_error, '-xb')
 plot(freq, eps1_model, '-r')
 set(gca, 'xscale', 'log')
 

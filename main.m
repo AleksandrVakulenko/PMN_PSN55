@@ -26,9 +26,6 @@ Fimag = @(v, X) -imag(ColeCole_4(v(1), v(2), v(3), ...
                                     X));
 
 
-Rand_add = @(N) 1 + 0.05*(rand(1, N)-0.5)*2;
-
-
 load('Data/coeff.mat')
 load('Data/Temp.mat')
 
@@ -51,6 +48,7 @@ filename = ['./Data/freq/T_' num2str(N) '.TXT'];
 relative_error = 0.6/100;
 eps1_abs_error = eps1*relative_error;
 eps2_abs_error = eps2*relative_error;
+
 ModelFunction = @(v) [(Freal(v, freq) - eps1)./eps1_abs_error; ...
                       (Fimag(v, freq) - eps2)./eps2_abs_error]';
 
@@ -168,18 +166,18 @@ yline(0)
 
 figure('position', [510 144 609 804])
 
-AX1 = subplot('position', [0.0809    0.6698    0.8745    0.2917]);
+AX1 = subplot('position', [0.08    0.6698    0.875    0.292]);
 hold on
 set(gca, 'fontsize', 10)
 
-AX1_res = subplot('position', [0.0809    0.5330    0.8745    0.1013]);
+AX1_res = subplot('position', [0.08     0.5330    0.875    0.102]);
 set(gca, 'fontsize', 10)
 
-AX2 = subplot('position', [0.0826    0.2127    0.8752    0.2749]);
+AX2 = subplot('position', [0.08    0.2127    0.875    0.272]);
 hold on
 set(gca, 'fontsize', 10)
 
-AX2_res = subplot('position', [0.0826    0.0703    0.8752    0.1026]);
+AX2_res = subplot('position', [0.08    0.0703    0.875    0.102]);
 set(gca, 'fontsize', 10)
 
 for N = 2:49
