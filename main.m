@@ -48,12 +48,11 @@ filename = ['./Data/freq/T_' num2str(N) '.TXT'];
 [freq, eps1, eps2] = importfile(filename);
 
 
-
-xdata = freq;
-ydata = [eps1, eps2];
-
-ModelFunction = @(v) [(Freal(v, xdata) - ydata(:,1))./(ydata(:,1)*0.006); ...
-                      (Fimag(v, xdata) - ydata(:,2))./(ydata(:,2)*0.006)]';
+relative_error = 0.6/100;
+eps1_abs_error = eps1*relative_error;
+eps2_abs_error = eps2*relative_error;
+ModelFunction = @(v) [(Freal(v, freq) - eps1)./eps1_abs_error; ...
+                      (Fimag(v, freq) - eps2)./eps2_abs_error]';
 
 % ModelFunction = @(v) [Fimag(v, xdata) - ydata(:,2)]';
 
@@ -167,11 +166,21 @@ yline(0)
 
 %% plot all Eps1(f), Eps2(f)
 
-figure
-subplot(2,1,1)
+figure('position', [510 144 609 804])
+
+AX1 = subplot('position', [0.0809    0.6698    0.8745    0.2917]);
 hold on
-subplot(2,1,2)
+set(gca, 'fontsize', 10)
+
+AX1_res = subplot('position', [0.0809    0.5330    0.8745    0.1013]);
+set(gca, 'fontsize', 10)
+
+AX2 = subplot('position', [0.0826    0.2127    0.8752    0.2749]);
 hold on
+set(gca, 'fontsize', 10)
+
+AX2_res = subplot('position', [0.0826    0.0703    0.8752    0.1026]);
+set(gca, 'fontsize', 10)
 
 for N = 2:49
 
@@ -184,30 +193,53 @@ filename = ['./Data/freq/T_' num2str(N) '.TXT'];
 eps1_model = Freal(vout, freq);
 eps2_model = Fimag(vout, freq);
 
-subplot(2,1,1)
+XLIM = [5e-3 1e7];
+
+axes(AX1)
 cla
-plot(freq, eps1, '-xb')
+% plot(freq, eps1, 'xb')
+errorbar(freq, eps1, eps1*relative_error, '.b')
 plot(freq, eps1_model, '-r')
 plot(freq, real(ColeCole(vout(1), vout(2), vout(3), freq)));
 plot(freq, real(ColeCole(vout(4), vout(5), vout(6), freq)));
 plot(freq, real(ColeCole(vout(7), vout(8), vout(9), freq)));
 plot(freq, real(ColeCole(vout(10), vout(11), vout(12), freq)));
 set(gca, 'xscale', 'log')
+ylabel('eps1')
+xlim(XLIM)
+set(gca, 'XTick', [])
+title(['T = ' num2str(Temp(N), '%3.0f') ' K'])
 
-subplot(2,1,2)
+axes(AX1_res)
+plot(freq, eps1-eps1_model, '-b')
+set(gca, 'xscale', 'log')
+xlim(XLIM)
+ylim([-max(abs(ylim)) +max(abs(ylim))])
+yline(0)
+
+axes(AX2)
 cla
-plot(freq, eps2, '-xb')
+% plot(freq, eps2, 'xb')
+errorbar(freq, eps2, eps2*relative_error, '.b')
 plot(freq, eps2_model, '-r')
 plot(freq, -imag(ColeCole(vout(1), vout(2), vout(3), freq)));
 plot(freq, -imag(ColeCole(vout(4), vout(5), vout(6), freq)));
 plot(freq, -imag(ColeCole(vout(7), vout(8), vout(9), freq)));
 plot(freq, -imag(ColeCole(vout(10), vout(11), vout(12), freq)));
 set(gca, 'xscale', 'log')
+ylabel('eps2')
+xlim(XLIM)
+set(gca, 'XTick', [])
 
-
+axes(AX2_res)
+plot(freq, eps2-eps2_model, '-b')
+set(gca, 'xscale', 'log')
+xlim(XLIM)
+ylim([-max(abs(ylim)) +max(abs(ylim))])
+yline(0)
 
 drawnow
-pause(0.1)
+% pause(0.1)
 
 % figure
 % hold on
