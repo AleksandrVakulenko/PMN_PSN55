@@ -52,9 +52,8 @@ filename = ['./Data/freq/T_' num2str(N) '.TXT'];
 xdata = freq;
 ydata = [eps1, eps2];
 
-ModelFunction = @(v) [(Fimag(v, xdata) - ydata(:,2))./mean(ydata(:,2)); ...
-                      (Freal(v, xdata) - ydata(:,1))./mean(ydata(:,1))*2 ...
-                      ]';
+ModelFunction = @(v) [(Freal(v, xdata) - ydata(:,1))./(ydata(:,1)*0.006); ...
+                      (Fimag(v, xdata) - ydata(:,2))./(ydata(:,2)*0.006)]';
 
 % ModelFunction = @(v) [Fimag(v, xdata) - ydata(:,2)]';
 
@@ -67,8 +66,8 @@ Lower([1,4,7,10]) = 0;
 Upper([1,4,7,10]) = 50000;
 
 %freq
-Lower([2,5,8,11]) = coeff(N, [2,5,8,11])*0.8;
-Upper([2,5,8,11]) = coeff(N, [2,5,8,11])*1.2;
+Lower([2,5,8,11]) = coeff(N, [2,5,8,11])*0.5;
+Upper([2,5,8,11]) = coeff(N, [2,5,8,11])*2.0;
 
 % alpha
 Lower([3,6,9,12]) = [0, 1, 0, 0];
@@ -77,20 +76,19 @@ Upper([3,6,9,12]) = [1, 1, 1, 1];
 
 options = optimoptions('lsqnonlin', ...
     'FiniteDifferenceType','central', ...
-    'MaxFunctionEvaluations', 800000, ...
-    'FunctionTolerance', 1E-12, ...
+    'MaxFunctionEvaluations', 80000, ...
+    'FunctionTolerance', 1E-9, ...
     'Algorithm','trust-region-reflective', ... %levenberg-marquardt trust-region-reflective
     'MaxIterations', 5000, ...
-    'StepTolerance', 1e-15, ...
+    'StepTolerance', 1e-10, ...
     'PlotFcn', '', ... %optimplotresnorm optimplotstepsize OR ''  (for none)
     'Display', 'final', ... %final off iter
-    'FiniteDifferenceStepSize', 1e-12, ...
+    'FiniteDifferenceStepSize', 1e-9, ...
     'CheckGradients', true, ...
     'DiffMaxChange', 0.01, ...
     'OptimalityTolerance', 1e-9);
 
 [vout, resnorm, residual, ~, ~, ~, jacobian] = lsqnonlin(ModelFunction, Start, Lower, Upper, options);
-
 
 
 errors = get_errors(vout, residual, jacobian);
@@ -190,13 +188,23 @@ subplot(2,1,1)
 cla
 plot(freq, eps1, '-xb')
 plot(freq, eps1_model, '-r')
+plot(freq, real(ColeCole(vout(1), vout(2), vout(3), freq)));
+plot(freq, real(ColeCole(vout(4), vout(5), vout(6), freq)));
+plot(freq, real(ColeCole(vout(7), vout(8), vout(9), freq)));
+plot(freq, real(ColeCole(vout(10), vout(11), vout(12), freq)));
 set(gca, 'xscale', 'log')
 
 subplot(2,1,2)
 cla
 plot(freq, eps2, '-xb')
 plot(freq, eps2_model, '-r')
+plot(freq, -imag(ColeCole(vout(1), vout(2), vout(3), freq)));
+plot(freq, -imag(ColeCole(vout(4), vout(5), vout(6), freq)));
+plot(freq, -imag(ColeCole(vout(7), vout(8), vout(9), freq)));
+plot(freq, -imag(ColeCole(vout(10), vout(11), vout(12), freq)));
 set(gca, 'xscale', 'log')
+
+
 
 drawnow
 pause(0.1)
